@@ -33,19 +33,24 @@ class Movie extends Component {
         const { movieId } = this.props.match.params;
         try {
             let result =  await(await fetch(endpoint)).json();
+                
                 if(result.status_code){ // 導到 not found page
                     this.setState({loading: false});
                 } else {
                     this.setState({ movie: result })
                     const creditsEndpoint = `${API_URL}movie/${movieId}/credits?api_key=${API_KEY}`;
                     const creditsResult =  await(await fetch(creditsEndpoint)).json();
-                    const directors = creditsResult.crew.filter((member) => member.job === "Director");      
+                    const directors = creditsResult.crew.filter((member) => member.job === "Director"); 
+                    // console.log(creditsEndpoint);
+                    // console.log(creditsResult);
+                    console.log(directors);
                     this.setState({
-                        actors: result.cast,
+                        actors: creditsResult.cast,
                         directors,
                         loading: false
                     }, () => {
                         localStorage.setItem(`${movieId}`, JSON.stringify(this.state));
+                        console.log(this.state.actors);
                     })
                 };
             }catch(e) {
